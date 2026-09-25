@@ -1,0 +1,112 @@
+% Tema Beamer della presentazione di laurea (UniPG, Ingegneria)
+% Richiede LuaLaTeX (fontspec) e i font Work Sans nella cartella fonts/.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tema}
+
+\RequirePackage{fontspec}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\RequirePackage{booktabs}
+\RequirePackage{colortbl}
+\RequirePackage{amsmath,amssymb,bm}
+\pgfplotsset{compat=1.18,every axis/.append style={font=\rmfamily\small}}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathreplacing,shapes.geometric}
+
+% ---------------------------------------------------------------- font
+\setsansfont{WorkSans}[
+  Path=fonts/, Extension=.ttf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+\usefonttheme{professionalfonts}
+\usefonttheme[onlymath]{serif}
+
+% niente sillabazione nei riquadri e nel testo delle slide
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+
+% ---------------------------------------------------------------- colori
+\definecolor{blutitolo}{HTML}{0066B3}
+\definecolor{blu}{HTML}{265991}
+\definecolor{bluscuro}{HTML}{0A1F5C}
+\definecolor{azzurro}{HTML}{33B2E5}
+\definecolor{chiaro}{HTML}{CFE2E6}
+\definecolor{bordo}{HTML}{2C4A5E}
+\definecolor{magenta}{HTML}{E0359C}
+\definecolor{grigio}{HTML}{8A8F96}
+\definecolor{testotenue}{HTML}{2C4A5E}
+\definecolor{verde}{HTML}{2DB04B}
+
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{frametitle}{fg=blutitolo}
+\setbeamercolor{title}{fg=blutitolo}
+\setbeamercolor{subtitle}{fg=blutitolo}
+\setbeamercolor{structure}{fg=blu}
+\setbeamercolor{itemize item}{fg=blu}
+\setbeamerfont{frametitle}{size=\LARGE}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}{\small\raise0.15ex\hbox{$\blacktriangleright$}}
+
+% ---------------------------------------------------------------- intestazione
+\setbeamertemplate{headline}{%
+  \vskip2.2mm%
+  \hbox to\paperwidth{\hfill{\normalsize\color{black}\insertsectionhead}\hspace*{1.8mm}}%
+  \vskip1.2mm%
+  \hbox to\paperwidth{\hspace*{0.26\paperwidth}%
+    \begin{tikzpicture}
+      \shade[left color=bluscuro,right color=white] (0,0) rectangle (0.70\paperwidth,0.9mm);
+    \end{tikzpicture}\hfill}%
+}
+\setbeamertemplate{frametitle}{%
+  \vskip-0.4mm\hspace*{-3.4mm}%
+  \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle\par\vskip1mm}
+
+% ---------------------------------------------------------------- piè di pagina
+% Nelle slide principali: n/totale; in quelle di riserva: R1, R2, ...
+\newif\ifriserva
+\setbeamertemplate{footline}{%
+  \hbox to\paperwidth{\hfill{\tiny\color{grigio}%
+    \ifriserva R\insertframenumber\else\insertframenumber/\inserttotalframenumber\fi}%
+  \hspace*{1.8mm}}\vskip1.8mm}
+
+% ---------------------------------------------------------------- stili TikZ
+\tikzset{
+  >={Stealth[length=2mm]},
+  freccia/.style={->,thick,draw=bordo},
+  scuro/.style={fill=blu,text=white,align=center,inner sep=4pt,font=\small},
+  tenue/.style={fill=chiaro,draw=bordo,thick,text=black,align=center,inner sep=4pt,font=\small},
+  evid/.style={fill=azzurro,text=black,align=center,inner sep=4pt,font=\small\bfseries},
+}
+
+% riquadro con intestazione scura, testo su fondo chiaro
+\newcommand{\riquadro}[3][\linewidth]{%
+  \begin{tikzpicture}
+    \node[scuro,minimum width=#1,text width=#1-8pt,font=\small\bfseries] (t) {#2};
+    \node[tenue,anchor=north,minimum width=#1,text width=#1-8pt,align=left] at (t.south) {#3};
+  \end{tikzpicture}}
+
+% foto di laboratorio: se il file manca, mostra un riquadro tratteggiato
+\newcommand{\foto}[3]{%
+  \IfFileExists{#1}{\includegraphics[width=#2,height=#3,keepaspectratio]{#1}}{%
+    \begin{tikzpicture}
+      \node[draw=bordo,dashed,minimum width=#2,minimum height=#3,align=center,
+            text=testotenue,font=\small] {FOTO:\\\detokenize{#1}};
+    \end{tikzpicture}}}
+
+% segno di spunta e croce disegnati con TikZ
+\newcommand{\si}{\tikz[baseline=-0.2ex]\draw[blu,line width=1.4pt,line cap=round,line join=round]
+  (-0.45ex,0.1ex) -- (-0.05ex,-0.4ex) -- (0.7ex,0.9ex);}
+\newcommand{\no}{\tikz[baseline=-0.2ex]\draw[magenta,line width=1.4pt,line cap=round]
+  (-0.45ex,-0.5ex) -- (0.45ex,0.9ex) (-0.45ex,0.9ex) -- (0.45ex,-0.5ex);}
+% quattro indicatori numerici in un riquadro 2x2
+\newcommand{\metriche}[8]{%
+  \begin{tikzpicture}
+    \node[fill=chiaro,draw=bordo,thick,inner sep=3mm]{%
+      \renewcommand{\arraystretch}{1.1}%
+      \begin{tabular}{@{}c@{\hspace{6mm}}c@{}}
+        {\large\bfseries\color{blu}#1} & {\large\bfseries\color{blu}#3}\\
+        {\footnotesize #2} & {\footnotesize #4}\\[3mm]
+        {\large\bfseries\color{blu}#5} & {\large\bfseries\color{blu}#7}\\
+        {\footnotesize #6} & {\footnotesize #8}
+      \end{tabular}};
+  \end{tikzpicture}}
+\newcommand{\nota}[1]{{\small\color{testotenue}#1}}
